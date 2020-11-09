@@ -1,4 +1,4 @@
-_pycache__
-debug.txt
+_pycache__/
+debug.log
 t2.py
 test.py
