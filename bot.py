@@ -53,7 +53,7 @@ def user_input():
 
 
 
-d = {0:datetime.time(10,0,0),1:datetime.time(11,10,0),2:datetime.time(12,20,0),3:datetime.time(17,4,0),4:datetime.time(18,45,0),5:datetime.time(16,0,0)}
+d = {0:datetime.time(10,0,0),1:datetime.time(11,10,0),2:datetime.time(12,20,0),3:datetime.time(13,30,0),4:datetime.time(15,0,0),5:datetime.time(16,0,0)}
 
 
 def attend(class_link,x):
@@ -76,13 +76,13 @@ def attend(class_link,x):
     try:
         no_one = driver.find_element_by_xpath("""//*[@id="yDmH0d"]/c-wiz/div/div/div[7]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/div[1]/div[2]/div[2]""").text
     except:
-        print("caught")
+        print("Caught Exception : No one else is here")
         # no_one = driver.find_element_by_xpath("""//*[@id="yDmH0d"]/c-wiz/div/div/div[7]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/div[1]/div[2]/div[2]""").text
         pass
 
     print(no_one)
     if no_one !="No one else is here":
-        xt = 5
+        xt = 2
 
 
 
@@ -91,13 +91,14 @@ def attend(class_link,x):
                 xt = driver.find_element_by_xpath("""//*[@id="yDmH0d"]/c-wiz/div/div/div[7]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/div[1]/div[2]/div[1]/div""").text
                 xt = int(xt[1:])  
             except:
+                print("Caught Exception : No. of people")
                 pass
 
 
              #//*[@id="yDmH0d"]/c-wiz/div/div/div[6]/div[3]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/div[1]/div[2]/div[1]/div
             no_ppl = xt+3
-            print(xt)
-            if no_ppl >=0:
+            print("No. of people in the call : %d"%(no_ppl))
+            if no_ppl >=5:
 
                 try:
                     joinButton = wait.until(when.element_to_be_clickable((by.XPATH, joinButton1Path)))
@@ -108,6 +109,7 @@ def attend(class_link,x):
             # driver.find_element_by_xpath("//body").send_keys(Keys.CONTROL)
                 sleep(1)
                 joinButton.click()
+                print("Class joined...")
 
                 g = d.get(x)
                 delta = datetime.timedelta(hours=1)
@@ -128,7 +130,9 @@ def attend(class_link,x):
                         # sys.stdout.write('\r'+"ended")
 
                         break 
-                    print("Class ends in",i,"sec",end='\r')
+                    p , q = divmod(i,60)
+
+                    print("Class ends in ",p," min ",q," sec ",end='\r')
                     sleep(1) 
                
 
@@ -184,6 +188,23 @@ def attend(class_link,x):
 
 #attend("https://meet.google.com/tfa-foge-dgb",4)
 #exit()
+
+def nearest(items, pivot):
+    want = datetime.timedelta(days=2)
+    wanted = datetime.datetime(2020,11,18)
+
+    for x in items:
+        g = datetime.datetime.combine(date.today(),pivot)
+        h = datetime.datetime.combine(date.today(), x)
+
+        a = abs(g - h)
+
+        if g<h:
+            if want > a:
+                want = a
+                wanted = x
+
+    return wanted.hour
 p_time = datetime.datetime.now()
 
 p_day = p_time.weekday()
@@ -193,24 +214,37 @@ c[10] = subjects[table[p_day][1]]
 c[11] = subjects[table[p_day][2]]
 c[12] = subjects[table[p_day][3]]
 if p_day!=1:
-    c[2] = subjects[table[p_day][4]]
+    c[14] = subjects[table[p_day][4]]
 print(c)
 
 s = {}
-s[9] = "9:05"
+s[9] = "09:05"
 s[10] = "10:15"
 s[11] = "11:25"
 s[12] = "12:35"
 if p_day!=1:
 
-    s[2] = "2:05"
+    s[14] = "14:05"
+    
 
 
 m = []
+p = {}
+now = p_time.time()
+print(type(now))
+p[9] = datetime.time(9,5,0)
+p[10] = datetime.time(10,15,0)
+p[11] = datetime.time(11,25,0)
+p[12] = datetime.time(12,35,0)
+p[14] = datetime.time(14,5,0)
+
+nexi = nearest(list(p.values()),datetime.time(13,0,0))
+print(nexi)
+
 # m[0].append(subjects[table[p_day][0]])
 # m[0].append("9:05")
-m.append(c.get(p_time.hour,"null"))
-m.append(s.get(p_time.hour,"null"))
+m.append(c.get(nexi,"null"))
+m.append(s.get(nexi,"null"))
 print(m)
 
 def animate():
@@ -269,7 +303,7 @@ while True:
             done = True
             x = 0
             index_of_class = table[present_day][x]
-            print("Attending "+subjects[index_of_class]+" class.")
+            print("\nAttending "+subjects[index_of_class]+" Class. ")
             class_to_attend = meet[subjects[index_of_class]]
             attend(class_to_attend,x)
             at[0] = 1
@@ -288,7 +322,7 @@ while True:
             done = True
             x = 1
             index_of_class = table[present_day][x]
-            print("Attending "+subjects[index_of_class]+" class.")
+            print("\nAttending "+subjects[index_of_class]+" Class. ")
             class_to_attend = meet[subjects[index_of_class]]
             attend(class_to_attend,x)
             at[1] = 1
@@ -306,7 +340,7 @@ while True:
             done = True
             x = 2
             index_of_class = table[present_day][x]
-            print("Attending "+subjects[index_of_class]+" class.")
+            print("\nAttending "+subjects[index_of_class]+" Class. ")
             class_to_attend = meet[subjects[index_of_class]]
             attend(class_to_attend,x)
             at[2] = 1
@@ -332,7 +366,7 @@ while True:
             done = True
             x = 3
             index_of_class = table[present_day][x]
-            print("Attending "+subjects[index_of_class]+" class.")
+            print("\nAttending "+subjects[index_of_class]+" Class. ")
             class_to_attend = meet[subjects[index_of_class]]
             attend(class_to_attend,x)
             at[3] = 1
@@ -356,7 +390,7 @@ while True:
             else:
                 x = 5
             index_of_class = table[present_day][x]
-            print("Attending "+subjects[index_of_class]+" class.")
+            print("\nAttending "+subjects[index_of_class]+" Class. ")
             class_to_attend = meet[subjects[index_of_class]]
             attend(class_to_attend,x)
             at[4] = 1
